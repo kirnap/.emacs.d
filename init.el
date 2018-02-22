@@ -36,6 +36,9 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (load-file custom-file)
 
+;; set default directory
+(setq default-directory "/Users/omer/Documents/Developer")
+
 ;; customize interface
 (setq inhibit-splash-screen t)
 (transient-mark-mode 1)
@@ -44,8 +47,8 @@
 (tool-bar-mode -1)
 (column-number-mode t)
 (add-hook 'prog-mode-hook 'linum-mode)
-(load-theme 'solarized-dark t)
-(set-frame-font "DejaVu Sans Mono-9" nil t)
+(load-theme 'afternoon t)
+;;(set-frame-font "DejaVu Sans Mono-12" nil t) ;; TODO: fix that returns font not found
 
 ;; helm configuration
 (require 'helm)
@@ -71,10 +74,16 @@
 (defvar helm-scroll-amount 8)
 (defvar helm-ff-file-name-history-use-recentf t)
 
+
+;; magit-tramp setup
+(require 'tramp)
+(add-to-list 'tramp-remote-path "/share/apps/git/git-2.7.2/bin/git")
+(add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+
 (helm-mode 1)
 
 (global-set-key (kbd "M-x") 'helm-M-x)
-(projectile-global-mode)
+;;(projectile-global-mode)
 (defvar helm-M-x-fuzzy-match t)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "C-x b") 'helm-mini)
@@ -101,7 +110,8 @@
 
 ;; Julia
 (load "~/.emacs.d/ESS/lisp/ess-site")
-(defvar inferior-julia-program-name "/usr/bin/julia")
+(load "/Users/omer/.emacs.d/elpa/julia-mode-20170916.628/julia-mode.el")
+(defvar inferior-julia-program-name "/Applications/Julia-0.6.app/Contents/Resources/julia/bin/julia")
 (add-hook 'julia-mode-hook #'smartparens-mode)
 
 ;; orgmode
@@ -109,6 +119,10 @@
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
+
+
+;; Moving around windows
+(windmove-default-keybindings)
 
 ;; Octave
 (setq auto-mode-alist
@@ -120,6 +134,13 @@
             (if (eq window-system 'x)
                 (font-lock-mode 1))))
 
+
+;; flycheck
+(global-flycheck-mode)
+(setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
+
+
+;;;;;;;;;;;;;; Key Binding Shortcuts ;;;;;;;;;;;;;;
 ;; multiple-cursors
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
@@ -132,6 +153,21 @@
 ;; expand-region
 (global-set-key (kbd "C-=") 'er/expand-region)
 
-;; flycheck
-(global-flycheck-mode)
-(setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc))
+;; comment single line
+(global-set-key
+ (kbd "C-x C-i")
+ (lambda ()
+   (interactive)
+   (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
+
+
+;; Comment chosen region
+(global-set-key 
+ (kbd "C-x C-k")
+ (lambda ()
+   (interactive)
+   (comment-or-uncomment-region (region-beginning) (region-end))))
+
+
+;; Copy line
+(global-set-key (kbd "C-c C-k") 'copy-line)
